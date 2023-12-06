@@ -5,28 +5,41 @@
  * With that string, fetch the api for better performance.
  */
 
-export const Search = ({ handleChange }) => {
+export const Search = ({ handleInputChange, handleDropDownChange }) => {
 
     return (
         <div className="w-2/6 mx-auto mb-10 mt-5">
-            <label htmlFor="price" className="block text-sm font-medium leading-6 text-gray-900">
+            <label htmlFor="name" className="block text-sm font-medium leading-6 text-gray-900">
                 Search
             </label>
             <div className="relative mt-2 rounded-md shadow-sm">
 
-                {/** Select box here */}
-
                 <input
-                    onChange={handleChange}
+                    onChange={handleInputChange}
                     type="text"
-                    name="price"
-                    id="price"
+                    name="name"
+                    id="name"
                     className="block w-full rounded-md border-0 py-1.5 pl-7 pr-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                     placeholder="Sam..."
                 />
 
+                <select
+                    onChange={handleDropDownChange}
+                    id="grade"
+                    name="grade"
+                    className="h-full rounded-md border-0 bg-transparent py-0 pl-2 pr-7 text-gray-500 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm"
+                >
+                    <option value={0}>Select Grade</option>
+                    <option value={1}>A</option>
+                    <option value={2}>B</option>
+                    <option value={3}>C</option>
+                    <option value={4}>D</option>
+                    <option value={5}>E</option>
+                    <option value={6}>F</option>
+                </select>
+
             </div>
-        </div>
+        </div >
     )
 }
 

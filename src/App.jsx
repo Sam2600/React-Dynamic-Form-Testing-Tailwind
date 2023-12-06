@@ -21,24 +21,30 @@ export const App = () => {
     const [search, setSearch] = useState("");
 
     // pagination pages
-    const [page, setPage] = useState(students?.current_page || 0);
+    const [page, setPage] = useState(students?.current_page || 1);
+
+
+    const [grade, setGrade] = useState(0);
 
     // search
-    const handleChange = (e) => setSearch(e.target.value);
+    const handleInputChange = (e) => setSearch(e.target.value);
 
     // page change
-    const handlePageChange = (e) => setPage(e.selected);
+    const handlePageChange = (e) => setPage(e.selected + 1);
+
+    // dropdown change
+    const handleDropDownChange = (e) => setGrade(e.target.value);
 
     // a little slowed search text for better performance
-    let debounce = useDebounce(search, 350);
+    let debounce = useDebounce(search, 200);
 
     const totalPage = students?.last_page;
 
     useEffect(() => {
 
-        if (debounce && page != 0) {
+        if (debounce && page) {
 
-            axios.get(`http://127.0.0.1:8000/api/students?page=${page}&q=${debounce}`, config)
+            axios.get(`http://127.0.0.1:8000/api/students?page=${page}&q=${debounce}&grade=${grade}`, config)
                 .then(res => res?.data)
                 .then(data => data?.data)
                 .then(result => setStudents(result))
@@ -54,7 +60,7 @@ export const App = () => {
 
         } else {
 
-            axios.get("http://127.0.0.1:8000/api/students", config)
+            axios.get(`http://127.0.0.1:8000/api/students?page=${page}`, config)
                 .then(res => res?.data)
                 .then(data => data?.data)
                 .then(result => setStudents(result))
@@ -78,7 +84,7 @@ export const App = () => {
 
     return (
         <div className="overflow-x-auto">
-            <Search handleChange={handleChange} />
+            <Search handleDropDownChange={handleDropDownChange} handleInputChange={handleInputChange} />
             <Table hoverable>
                 <Table.Head>
                     <Table.HeadCell>ID</Table.HeadCell>
