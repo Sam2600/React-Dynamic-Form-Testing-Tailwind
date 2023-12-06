@@ -1,31 +1,11 @@
-import { useEffect, useState } from "react"
-import { useDebounce } from "../commonHooks/useDebounce";
-import axios from "axios";
-
-const config = {
-    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
-}
+/* eslint-disable react/prop-types */
 
 /**
  * Onchange event change the state cause re-render, so debounce value is always change and return the milli sec delayed string.
  * With that string, fetch the api for better performance.
  */
 
-export const Search = () => {
-
-    const [search, setSearch] = useState("");
-
-    const handleChange = (e) => setSearch(e.target.value);
-
-    let debounce = useDebounce(search, 350);
-
-    useEffect(() => {
-
-        axios.get("http://127.0.0.1:8000/api/students", config)
-            .then(res => console.log(res?.data))
-            .catch(err => console.log(err))
-
-    }, [debounce])
+export const Search = ({ handleChange }) => {
 
     return (
         <div className="w-2/6 mx-auto mb-10 mt-5">
@@ -33,9 +13,9 @@ export const Search = () => {
                 Search
             </label>
             <div className="relative mt-2 rounded-md shadow-sm">
-                {/* <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                    ...
-                </div> */}
+
+                {/** Select box here */}
+
                 <input
                     onChange={handleChange}
                     type="text"
@@ -44,7 +24,7 @@ export const Search = () => {
                     className="block w-full rounded-md border-0 py-1.5 pl-7 pr-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                     placeholder="Sam..."
                 />
-                {/** Select box here */}
+
             </div>
         </div>
     )
