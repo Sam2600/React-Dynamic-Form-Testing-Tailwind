@@ -8,7 +8,7 @@
 export const Search = ({ handleInputChange, handleDropDownChange }) => {
 
     return (
-        <div className="w-2/6 mx-auto mb-10 mt-5">
+        <div className="w-3/12 mx-auto mb-10 mt-5">
             <label htmlFor="name" className="block text-sm font-medium leading-6 text-gray-900">
                 Search
             </label>
@@ -23,21 +23,25 @@ export const Search = ({ handleInputChange, handleDropDownChange }) => {
                     placeholder="Sam..."
                 />
 
-                <select
-                    onChange={handleDropDownChange}
-                    id="grade"
-                    name="grade"
-                    className="h-full rounded-md border-0 bg-transparent py-0 pl-2 pr-7 text-gray-500 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm"
-                >
-                    <option value={0}>Select Grade</option>
-                    <option value={1}>A</option>
-                    <option value={2}>B</option>
-                    <option value={3}>C</option>
-                    <option value={4}>D</option>
-                    <option value={5}>E</option>
-                    <option value={6}>F</option>
-                </select>
-
+                <div className="absolute inset-y-0 right-0 flex items-center">
+                    <label htmlFor="currency" className="sr-only">
+                        Grade
+                    </label>
+                    <select
+                        onChange={handleDropDownChange}
+                        id="grade"
+                        name="grade"
+                        className="h-full rounded-md border-0 bg-transparent py-0 pl-2 pr-7 text-gray-500 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm"
+                    >
+                        <option value={0}>Select Grade</option>
+                        <option value={1}>A</option>
+                        <option value={2}>B</option>
+                        <option value={3}>C</option>
+                        <option value={4}>D</option>
+                        <option value={5}>E</option>
+                        <option value={6}>F</option>
+                    </select>
+                </div>
             </div>
         </div >
     )

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 'use client';
 import { Button, Table } from 'flowbite-react';
@@ -23,49 +24,30 @@ export const App = () => {
     // pagination pages
     const [page, setPage] = useState(students?.current_page || 1);
 
-
+    // grade
     const [grade, setGrade] = useState(0);
 
-    // search
+    // search function
     const handleInputChange = (e) => setSearch(e.target.value);
 
-    // page change
+    // page change function
     const handlePageChange = (e) => setPage(e.selected + 1);
 
-    // dropdown change
+    // dropdown change function
     const handleDropDownChange = (e) => setGrade(e.target.value);
 
     // a little slowed search text for better performance
-    let debounce = useDebounce(search, 200);
+    let debounce = useDebounce(search, 350);
 
     const totalPage = students?.last_page;
 
     useEffect(() => {
 
-        if (debounce && page) {
-
-            axios.get(`http://127.0.0.1:8000/api/students?page=${page}&q=${debounce}&grade=${grade}`, config)
-                .then(res => res?.data)
-                .then(data => data?.data)
-                .then(result => setStudents(result))
-                .catch(err => console.log(err))
-
-        } else if (debounce) {
-
-            axios.get(`http://127.0.0.1:8000/api/students?q=${debounce}`, config)
-                .then(res => res?.data)
-                .then(data => data?.data)
-                .then(result => setStudents(result))
-                .catch(err => console.log(err))
-
-        } else {
-
-            axios.get(`http://127.0.0.1:8000/api/students?page=${page}`, config)
-                .then(res => res?.data)
-                .then(data => data?.data)
-                .then(result => setStudents(result))
-                .catch(err => console.log(err))
-        }
+        axios.get(`http://127.0.0.1:8000/api/students?page=${page}&q=${debounce}&grade=${grade}`, config)
+            .then(res => res?.data)
+            .then(data => data?.data)
+            .then(result => setStudents(result))
+            .catch(err => console.log(err));
 
     }, [debounce, page])
 
@@ -74,6 +56,7 @@ export const App = () => {
         <Table.Row key={student.id} className="bg-white dark:border-gray-700 dark:bg-gray-800">
             <Table.Cell>{student.id}</Table.Cell>
             <Table.Cell>{student.name}</Table.Cell>
+            <Table.Cell>{student.grade}</Table.Cell>
             <Table.Cell>{student.email}</Table.Cell>
             <Table.Cell style={{ display: "flex", gap: "10px" }}>
                 <Button style={{ width: "65px" }}>Edit</Button>
@@ -89,6 +72,7 @@ export const App = () => {
                 <Table.Head>
                     <Table.HeadCell>ID</Table.HeadCell>
                     <Table.HeadCell>Name</Table.HeadCell>
+                    <Table.HeadCell>Grade</Table.HeadCell>
                     <Table.HeadCell>Email</Table.HeadCell>
                     <Table.HeadCell>Actions</Table.HeadCell>
                     {/* <Table.HeadCell>
