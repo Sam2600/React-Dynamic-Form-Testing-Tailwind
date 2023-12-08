@@ -6,8 +6,7 @@ import ReactPaginate from "react-paginate";
 export const PaginatedItems = ({ totalPage, handlePageChange }) => {
 
     return (
-        <div>
-            {/* <Items currentItems={currentItems} /> */}
+        <div className="mt-5">
             <ReactPaginate className="flex flex-row gap-4 p-3"
                 breakLabel="..."
                 nextLabel="next >"
