@@ -51,18 +51,14 @@ export const StudentList = () => {
     // Table body records
     let studentRecords;
 
-    studentRecords = !students?.data
+    studentRecords = students?.data.map((student, index) => {
 
-        ? <div className='text-center'>No result for this search</div>
+        const isLast = index === students?.data.length - 1;
+        const classes = isLast ? "p-4" : "p-4 border-b border-blue-gray-50";
 
-        : students?.data.map((student, index) => {
+        return <TableRecord key={student.id} student={student} classes={classes} />
 
-            const isLast = index === students?.data.length - 1;
-            const classes = isLast ? "p-4" : "p-4 border-b border-blue-gray-50";
-
-            return <TableRecord key={student.id} student={student} classes={classes} />
-
-        });
+    });
 
 
     return (

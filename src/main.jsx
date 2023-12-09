@@ -8,6 +8,7 @@ import { Register } from './pages/Register';
 import { Login } from './pages/Login';
 
 import { ThemeProvider } from "@material-tailwind/react";
+import { TestingForm } from './pages/TestingForm';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   // <React.StrictMode>
@@ -17,6 +18,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <Route path='/' element={<StudentList />} />
         <Route path='/login' element={<Login />} />
         <Route path='/register' element={<Register />} />
+        <Route path='/TestingForm' element={<TestingForm />} />
       </Routes>
     </BrowserRouter>
   </ThemeProvider>
