@@ -28,6 +28,9 @@ export const StudentList = () => {
         grade: 0
     });
 
+    // error
+    const [error, setError] = useState(null);
+
     // a little slowed search text for better performance
     const debounce = useDebounce(queryParam.search, 350);
 
@@ -38,21 +41,29 @@ export const StudentList = () => {
         axiosClient.get(`students?page=${queryParam.page}&q=${debounce}&grade=${queryParam.grade}`)
             .then(res => res?.data)
             .then(data => data?.data)
+
             .then(result => setStudents(result))
-            .catch(err => console.log(err));
+
+            .catch(error => setError(error));
 
     }, [debounce, queryParam.page])
 
     // Table body records
-    const studentRecords = students?.data.map((student, index) => {
+    let studentRecords;
 
-        const isLast = index === students?.data.length - 1;
-        const classes = isLast ? "p-4" : "p-4 border-b border-blue-gray-50";
+    studentRecords = !students?.data
 
-        return (
-            <TableRecord key={student.id} student={student} classes={classes} />
-        )
-    })
+        ? <div className='text-center'>No result for this search</div>
+
+        : students?.data.map((student, index) => {
+
+            const isLast = index === students?.data.length - 1;
+            const classes = isLast ? "p-4" : "p-4 border-b border-blue-gray-50";
+
+            return <TableRecord key={student.id} student={student} classes={classes} />
+
+        });
+
 
     return (
         <>
