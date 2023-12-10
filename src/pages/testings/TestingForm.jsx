@@ -1,12 +1,32 @@
 /* eslint-disable no-unused-vars */
-import { useFieldArray, useForm } from "react-hook-form";
 import { DevTool } from "@hookform/devtools";
-import { axiosClient } from "../axios/axiosClient";
+import { axiosClient } from "../../axios/axiosClient";
+import { useFieldArray, useForm } from "react-hook-form";
+
+
+{/** 
+    Take a note that valueAsNumber and valueAsDate are available for actual number and date 
+*/ }
+
+{/** 
+    SetValue is useful for cleaning the form data after submit 
+*/ }
+
+{/** 
+    Disabled: true is useful even the field is required but when it is disabled, it will not trigger validation error.
+    Disabled is also good with watch("field") === "", means it the target field is not empty, we can undisable the current field.
+*/ }
+
+{/** 
+    We can also disabel the submit with the isDirty or isValid of useForm. For all input are valid or some required fields are filled. 
+*/ }
+
 
 export const TestingForm = () => {
 
+
     // UseForm hook 
-    const { register, formState: { errors }, control, handleSubmit } = useForm({
+    const { register, formState, control, handleSubmit, watch, reset } = useForm({
 
         /**
          *  This is normal default Values
@@ -24,8 +44,8 @@ export const TestingForm = () => {
             const data = await response.data?.data;
 
             return {
-                email: data.email,
-                password: "",
+                email: data?.email,
+                password: null,
                 social: {
                     facebook: "",
                     twiter: ""
@@ -33,15 +53,32 @@ export const TestingForm = () => {
                 // phones: ["", ""],
                 phoneNumbers: []
             }
-        }
+        },
+
+        // Validation mode can change later based on situation
+        mode: "all"
 
     });
+
+
+    // Useful Form states
+    const { errors, isSubmitted, submitCount, isSubmitting, isSubmitSuccessful, isValid } = formState;
+
 
     // Preparing for dynamic field array with the hook
     const { fields, append, remove, insert } = useFieldArray({
         name: 'phoneNumbers', // This is like registering which field is gonna used as dynamic field
         control
     });
+
+
+    // while submitting, display loading
+    isSubmitting && <div>Loading...</div>
+
+
+    // after submit success, reset the form
+    isSubmitSuccessful && reset();
+
 
     // Dynamic field array for Phone Number
     let phoneNumbers = fields.length === 0
@@ -100,14 +137,24 @@ export const TestingForm = () => {
 
         ));
 
+
+    // handle onSubmit
     const onSubmit = (data) => {
-        console.log(data)
+        //console.log(data)
     }
+
+
+    // Good for making custom messages
+    const onError = (error) => {
+        //console.log(error)
+    }
+
 
     /**
      *  This is bad code and so many, should not use like this
      *  const { name, ref, onChange, onBlur } = register("email");
      */
+
 
     return (
         <>
@@ -115,6 +162,7 @@ export const TestingForm = () => {
 
             < div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8" >
 
+                {/** Form title and logo */}
                 <div className="sm:mx-auto sm:w-full sm:max-w-sm">
                     <img
                         className="mx-auto h-10 w-auto"
@@ -128,7 +176,7 @@ export const TestingForm = () => {
 
                 <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
 
-                    <form className="space-y-6" method="POST" onSubmit={handleSubmit(onSubmit)}>
+                    <form className="space-y-6" method="POST" onSubmit={handleSubmit(onSubmit, onError)}>
 
                         {/** Email Address */}
                         <div>
@@ -160,9 +208,17 @@ export const TestingForm = () => {
 
                                             validate: { // This is for multiple input validation rule
                                                 notAdmin: (value) => value !== "admin@gmail.com" || "Please try with different email",
-                                                badDomain: (value) => !value.endsWith("customMail.com") || "Bad domain for email"
-                                            }
+                                                badDomain: (value) => !value.endsWith("customMail.com") || "Bad domain for email",
 
+                                                // This is for updating process, check the backend data is already exists with current input value or not
+                                                emailDuplicate: async (value) => {
+
+                                                    const response = await axiosClient.get("/me");
+                                                    const data = await response.data?.data;
+                                                    return data.email !== value || "Email already exists";
+                                                }
+
+                                            }
                                         })}
                                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                 />
@@ -189,6 +245,10 @@ export const TestingForm = () => {
                                     type="password"
                                     {...register("password",
                                         {
+                                            // A little bit dangerous to use, use it only when really need it
+
+                                            //disabled: watch("email") === "",
+
                                             required: {
                                                 value: true,
                                                 message: "Password is required"
@@ -349,19 +409,34 @@ export const TestingForm = () => {
                         </div>
                         {/** Phones */}
 
-                        {/** Submit Button */}
-                        <div>
+                        {/** Form buttons */}
+                        <div className="flex flex-row justify-between">
+                            {/** Submit Button */}
                             <button
+                                //Disabling button with condition. Good with isValid also
+                                disabled={isSubmitting}
                                 type="submit"
-                                className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                                className="flex w-3/12 justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                             >
                                 Submit
                             </button>
+                            {/** Submit Button */}
+
+                            {/** Reset Button */}
+                            <button
+                                onClick={() => reset()} // reset the all input field vlues
+                                type="button"
+                                className="flex w-3/12 justify-center rounded-md bg-gray-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-gray-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                            >
+                                Reset
+                            </button>
+                            {/** Reset Button */}
                         </div>
-                        {/** Submit Button */}
+                        {/** Form buttons */}
 
                     </form>
 
+                    {/** DevTool to track the hook-form in browser */}
                     <DevTool control={control} />
 
                 </div >
